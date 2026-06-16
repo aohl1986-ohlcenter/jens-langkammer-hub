@@ -8,117 +8,117 @@
 
   // --- Particle Network ---
   const canvas = document.getElementById('particle-canvas');
-  if (!canvas) return;
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let width, height;
+    let animationId;
+    const PARTICLE_COUNT = 45;
+    const CONNECTION_DISTANCE = 140;
+    const GOLD = { r: 212, g: 168, b: 0 };
 
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  let width, height;
-  let animationId;
-  const PARTICLE_COUNT = 45;
-  const CONNECTION_DISTANCE = 140;
-  const GOLD = { r: 212, g: 168, b: 0 };
-
-  function resize() {
-    const hero = canvas.parentElement;
-    width = canvas.width = hero.offsetWidth;
-    height = canvas.height = hero.offsetHeight;
-  }
-
-  function createParticles() {
-    particles = [];
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 2.5 + 1,
-        opacity: Math.random() * 0.4 + 0.1,
-      });
+    function resize() {
+      const hero = canvas.parentElement;
+      width = canvas.width = hero.offsetWidth;
+      height = canvas.height = hero.offsetHeight;
     }
-  }
 
-  function drawParticles() {
-    ctx.clearRect(0, 0, width, height);
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: Math.random() * 2.5 + 1,
+          opacity: Math.random() * 0.4 + 0.1,
+        });
+      }
+    }
 
-    // Draw connections
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+    function drawParticles() {
+      ctx.clearRect(0, 0, width, height);
 
-        if (dist < CONNECTION_DISTANCE) {
-          const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.12;
-          ctx.strokeStyle = `rgba(${GOLD.r}, ${GOLD.g}, ${GOLD.b}, ${opacity})`;
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.stroke();
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < CONNECTION_DISTANCE) {
+            const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.12;
+            ctx.strokeStyle = `rgba(${GOLD.r}, ${GOLD.g}, ${GOLD.b}, ${opacity})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
         }
       }
-    }
 
-    // Draw particles
-    for (const p of particles) {
-      ctx.fillStyle = `rgba(${GOLD.r}, ${GOLD.g}, ${GOLD.b}, ${p.opacity})`;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function updateParticles() {
-    for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-
-      if (p.x < 0 || p.x > width) p.vx *= -1;
-      if (p.y < 0 || p.y > height) p.vy *= -1;
-    }
-  }
-
-  function animate() {
-    updateParticles();
-    drawParticles();
-    animationId = requestAnimationFrame(animate);
-  }
-
-  // Defer initialization to avoid forced reflow during critical rendering path
-  window.addEventListener('DOMContentLoaded', () => {
-    requestAnimationFrame(() => {
-      const isMobile = window.innerWidth < 768;
-      resize();
-      createParticles();
-      if (isMobile) {
-        particles = particles.slice(0, 20);
+      // Draw particles
+      for (const p of particles) {
+        ctx.fillStyle = `rgba(${GOLD.r}, ${GOLD.g}, ${GOLD.b}, ${p.opacity})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
       }
-      animate();
+    }
+
+    function updateParticles() {
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+      }
+    }
+
+    function animate() {
+      updateParticles();
+      drawParticles();
+      animationId = requestAnimationFrame(animate);
+    }
+
+    // Defer initialization to avoid forced reflow during critical rendering path
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => {
+        const isMobile = window.innerWidth < 768;
+        resize();
+        createParticles();
+        if (isMobile) {
+          particles = particles.slice(0, 20);
+        }
+        animate();
+      });
     });
-  });
 
-  // Debounced resize
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      resize();
-      createParticles();
-      if (window.innerWidth < 768) {
-        particles = particles.slice(0, 20);
+    // Debounced resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resize();
+        createParticles();
+        if (window.innerWidth < 768) {
+          particles = particles.slice(0, 20);
+        }
+      }, 250);
+    });
+
+    // Pause animation when tab is not visible
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationId);
+      } else {
+        animate();
       }
-    }, 250);
-  });
-
-  // Pause animation when tab is not visible
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      cancelAnimationFrame(animationId);
-    } else {
-      animate();
-    }
-  });
+    });
+  }
 
   // --- Intersection Observer for Reveal Animations ---
   const reveals = document.querySelectorAll('.reveal');
