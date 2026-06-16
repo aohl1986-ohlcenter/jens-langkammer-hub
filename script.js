@@ -85,23 +85,18 @@
     animationId = requestAnimationFrame(animate);
   }
 
-  // Reduce particles on mobile for performance
-  const isMobile = window.innerWidth < 768;
-  if (isMobile) {
-    // Fewer particles on mobile
-    const origCount = PARTICLE_COUNT;
-    // We can't reassign const, so we just pop extras after creation
-  }
-
-  resize();
-  createParticles();
-
-  if (isMobile) {
-    // Remove excess particles for performance
-    particles = particles.slice(0, 20);
-  }
-
-  animate();
+  // Defer initialization to avoid forced reflow during critical rendering path
+  window.addEventListener('DOMContentLoaded', () => {
+    requestAnimationFrame(() => {
+      const isMobile = window.innerWidth < 768;
+      resize();
+      createParticles();
+      if (isMobile) {
+        particles = particles.slice(0, 20);
+      }
+      animate();
+    });
+  });
 
   // Debounced resize
   let resizeTimer;

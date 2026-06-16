@@ -616,7 +616,7 @@ img {
 
 .footer-links a {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -626,7 +626,7 @@ img {
 
 .footer-copy {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .footer-badge {
@@ -634,7 +634,7 @@ img {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   padding: 0.3rem 0.7rem;
   background: var(--bg-glass);
   border: 1px solid var(--border-glass);
@@ -820,7 +820,7 @@ img {
 .cookie-decline {
   padding: 0.6rem 1.75rem;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-weight: 500;
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-pill);
