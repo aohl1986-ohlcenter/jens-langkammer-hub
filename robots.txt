@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.jens-langkammer.de/sitemap.xml
+Sitemap: https://jens-langkammer.de/sitemap.xml
