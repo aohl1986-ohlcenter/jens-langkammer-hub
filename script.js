@@ -40,6 +40,10 @@
     function drawParticles() {
       ctx.clearRect(0, 0, width, height);
 
+      // Dynamically get theme colors for particles
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const activeGold = isDark ? { r: 212, g: 168, b: 0 } : { r: 181, g: 143, b: 0 };
+
       // Draw connections
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
@@ -49,7 +53,7 @@
 
           if (dist < CONNECTION_DISTANCE) {
             const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.12;
-            ctx.strokeStyle = `rgba(${GOLD.r}, ${GOLD.g}, ${GOLD.b}, ${opacity})`;
+            ctx.strokeStyle = `rgba(${activeGold.r}, ${activeGold.g}, ${activeGold.b}, ${opacity})`;
             ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
@@ -61,7 +65,7 @@
 
       // Draw particles
       for (const p of particles) {
-        ctx.fillStyle = `rgba(${GOLD.r}, ${GOLD.g}, ${GOLD.b}, ${p.opacity})`;
+        ctx.fillStyle = `rgba(${activeGold.r}, ${activeGold.g}, ${activeGold.b}, ${p.opacity})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
@@ -197,4 +201,15 @@
     }
   `;
   document.head.appendChild(styleSheet);
+
+  // --- Theme Toggle ---
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  }
 })();
