@@ -188,20 +188,6 @@
     }
   }
 
-  // Slide animations for cookie banner
-  const styleSheet = document.createElement('style');
-  styleSheet.textContent = `
-    @keyframes slideUp {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes slideDown {
-      from { transform: translateY(0); opacity: 1; }
-      to { transform: translateY(100%); opacity: 0; }
-    }
-  `;
-  document.head.appendChild(styleSheet);
-
   // --- Theme Toggle ---
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
