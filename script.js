@@ -284,7 +284,7 @@
       iframe.title = 'LinkedIn Embedded Post';
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('allowfullscreen', '');
-      iframe.setAttribute('loading', 'lazy');
+      iframe.setAttribute('loading', 'eager');
       
       // Adjust height on load
       iframe.onload = function() {
