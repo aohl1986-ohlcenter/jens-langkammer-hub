@@ -198,4 +198,178 @@
       localStorage.setItem('theme', newTheme);
     });
   }
+
+  // --- LinkedIn Embed Modal Controller ---
+  const linkedinModal = document.getElementById('linkedinModal');
+  if (linkedinModal) {
+    const consentContainer = document.getElementById('linkedinConsentContainer');
+    const spinnerContainer = document.getElementById('linkedinModalSpinner');
+    const iframeContainer = document.getElementById('linkedinIframeContainer');
+    
+    const loadBtn = document.getElementById('loadLinkedinIframe');
+    const saveConsentCheckbox = document.getElementById('saveLinkedinConsent');
+    const externalLink = document.getElementById('linkedinModalExternalLink');
+    const consentExternalLink = document.getElementById('linkedinConsentExternalLink');
+    const themeFilterToggle = document.getElementById('linkedinModalThemeToggle');
+    
+    let activeEmbedUrl = '';
+    let activeOriginalUrl = '';
+
+    // Check if the site is in dark mode
+    function isDarkMode() {
+      return document.documentElement.getAttribute('data-theme') === 'dark';
+    }
+
+    // Set initial filter state based on page dark mode
+    function updateThemeFilterState(forceDefault) {
+      if (!themeFilterToggle || !iframeContainer) return;
+      
+      const shouldInvert = forceDefault !== undefined ? forceDefault : isDarkMode();
+      if (shouldInvert) {
+        iframeContainer.classList.add('invert-theme');
+        themeFilterToggle.classList.add('filter-active');
+      } else {
+        iframeContainer.classList.remove('invert-theme');
+        themeFilterToggle.classList.remove('filter-active');
+      }
+    }
+
+    // Open Modal Function
+    function openModal(embedUrl, originalUrl) {
+      activeEmbedUrl = embedUrl;
+      activeOriginalUrl = originalUrl;
+      
+      // Update external links
+      if (externalLink) externalLink.href = originalUrl;
+      if (consentExternalLink) consentExternalLink.href = originalUrl;
+      
+      // Reset view states
+      consentContainer.style.display = 'none';
+      spinnerContainer.style.display = 'none';
+      iframeContainer.style.display = 'none';
+      iframeContainer.innerHTML = '';
+      
+      // Update filter toggle state to match page theme by default
+      updateThemeFilterState();
+
+      // Show Modal
+      linkedinModal.classList.add('active');
+      linkedinModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden'; // Scroll lock
+      
+      // Check DSGVO consent
+      const hasConsent = localStorage.getItem('linkedinConsent') === 'accepted';
+      if (hasConsent) {
+        loadIframe(embedUrl);
+      } else {
+        consentContainer.style.display = 'flex';
+      }
+
+      // Accessibility: Focus first focusable element
+      setTimeout(() => {
+        const focusable = linkedinModal.querySelector('button, [href], input, select, textarea');
+        if (focusable) focusable.focus();
+      }, 50);
+    }
+
+    // Load Iframe Function
+    function loadIframe(embedUrl) {
+      consentContainer.style.display = 'none';
+      spinnerContainer.style.display = 'block';
+      iframeContainer.style.display = 'none';
+      
+      // Create iframe element dynamically
+      const iframe = document.createElement('iframe');
+      iframe.src = embedUrl;
+      iframe.title = 'LinkedIn Embedded Post';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('loading', 'lazy');
+      
+      // Adjust height on load
+      iframe.onload = function() {
+        spinnerContainer.style.display = 'none';
+        iframeContainer.style.display = 'flex';
+      };
+      
+      iframeContainer.appendChild(iframe);
+    }
+
+    // Close Modal Function
+    function closeModal() {
+      linkedinModal.classList.remove('active');
+      linkedinModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = ''; // Release scroll lock
+      
+      // Clear iframe src after transition to stop background audio/video
+      setTimeout(() => {
+        iframeContainer.innerHTML = '';
+        activeEmbedUrl = '';
+        activeOriginalUrl = '';
+      }, 350);
+    }
+
+    // Event listener: LinkedIn link clicks
+    document.querySelectorAll('a[data-linkedin-embed]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const embedUrl = this.getAttribute('data-linkedin-embed');
+        const originalUrl = this.getAttribute('href');
+        if (embedUrl) {
+          e.preventDefault();
+          openModal(embedUrl, originalUrl);
+        }
+      });
+    });
+
+    // Event listener: Load button clicked (Consent screen)
+    if (loadBtn) {
+      loadBtn.addEventListener('click', () => {
+        if (saveConsentCheckbox && saveConsentCheckbox.checked) {
+          localStorage.setItem('linkedinConsent', 'accepted');
+        }
+        loadIframe(activeEmbedUrl);
+      });
+    }
+
+    // Event listener: Theme toggle for the iframe (contrast adjustment)
+    if (themeFilterToggle) {
+      themeFilterToggle.addEventListener('click', () => {
+        const isCurrentlyInverted = iframeContainer.classList.contains('invert-theme');
+        updateThemeFilterState(!isCurrentlyInverted);
+      });
+    }
+
+    // Event listener: Close modal actions
+    linkedinModal.querySelectorAll('[data-close-modal]').forEach(el => {
+      el.addEventListener('click', closeModal);
+    });
+
+    // Event listener: Close on Escape key press
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && linkedinModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // Trap focus inside modal for Accessibility
+    linkedinModal.addEventListener('keydown', function(e) {
+      if (e.key !== 'Tab') return;
+      
+      const focusableEls = linkedinModal.querySelectorAll('button:not([disabled]), [href]:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
+      const firstFocusableEl = focusableEls[0];
+      const lastFocusableEl = focusableEls[focusableEls.length - 1];
+      
+      if (e.shiftKey) { // Shift + Tab
+        if (document.activeElement === firstFocusableEl) {
+          lastFocusableEl.focus();
+          e.preventDefault();
+        }
+      } else { // Tab
+        if (document.activeElement === lastFocusableEl) {
+          firstFocusableEl.focus();
+          e.preventDefault();
+        }
+      }
+    });
+  }
 })();

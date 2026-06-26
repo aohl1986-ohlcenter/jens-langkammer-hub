@@ -1117,5 +1117,383 @@ html[data-theme="light"] .theme-toggle-icon--moon {
   to { transform: translateY(100%); opacity: 0; }
 }
 
+/* ---------- LinkedIn Embed Lightbox Modal ---------- */
+
+/* Modal Base */
+.linkedin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.35s var(--ease-out), visibility 0.35s var(--ease-out);
+}
+
+.linkedin-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Modal Overlay */
+.linkedin-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(7, 8, 13, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.35s var(--ease-out);
+}
+
+[data-theme="dark"] .linkedin-modal-overlay {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* Modal Content Window */
+.linkedin-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  transform: scale(0.92);
+  opacity: 0;
+  transition: transform 0.35s var(--ease-out), opacity 0.35s var(--ease-out);
+}
+
+[data-theme="dark"] .linkedin-modal-content {
+  background: #0d0f16;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.linkedin-modal.active .linkedin-modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Header styling */
+.linkedin-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-secondary);
+  position: relative;
+  z-index: 3;
+}
+
+[data-theme="dark"] .linkedin-modal-header {
+  background: #0d0f16;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.linkedin-modal-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.linkedin-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Buttons in Header */
+.linkedin-modal-action-btn,
+.linkedin-modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+}
+
+.linkedin-modal-action-btn:hover,
+.linkedin-modal-close:hover {
+  background: var(--bg-card-hover);
+  color: var(--gold-primary);
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .linkedin-modal-action-btn:hover,
+[data-theme="dark"] .linkedin-modal-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Modal Body */
+.linkedin-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 350px;
+  position: relative;
+}
+
+/* DSGVO Consent Facade Styling */
+.linkedin-consent-container {
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s var(--ease-out) forwards;
+}
+
+.linkedin-logo-container {
+  color: #0077b5; /* LinkedIn brand blue */
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.linkedin-brand-logo {
+  width: 64px;
+  height: 64px;
+}
+
+.linkedin-consent-container h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.linkedin-consent-container p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.linkedin-consent-save-option {
+  margin-bottom: 1.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.linkedin-checkbox-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+/* Checkbox Styling */
+.linkedin-checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-glass);
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.linkedin-checkbox-label:hover .custom-checkbox {
+  border-color: var(--gold-primary);
+}
+
+.linkedin-checkbox-label input[type="checkbox"]:checked + .custom-checkbox {
+  background: var(--gold-primary);
+  border-color: var(--gold-primary);
+}
+
+.linkedin-checkbox-label input[type="checkbox"]:checked + .custom-checkbox::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Consent Buttons */
+.linkedin-consent-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-consent-load {
+  background: var(--gold-primary);
+  color: white;
+  border: 1px solid var(--gold-primary);
+}
+
+.btn-consent-load:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--gold-glow);
+}
+
+.btn-consent-external {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass);
+}
+
+.btn-consent-external:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--gold-primary);
+  transform: translateY(-2px);
+}
+
+/* Loading Spinner */
+.linkedin-spinner-container {
+  text-align: center;
+  animation: fadeIn 0.3s var(--ease-out) forwards;
+}
+
+.linkedin-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(181, 143, 0, 0.1);
+  border-top-color: var(--gold-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.linkedin-spinner-container p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Iframe Container & Styling */
+.linkedin-iframe-container {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s var(--ease-out) forwards;
+}
+
+.linkedin-iframe-container iframe {
+  width: 100%;
+  height: 520px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  background: #ffffff; /* LinkedIn iframe native background */
+  transition: filter 0.3s var(--ease-out);
+}
+
+/* Dark Mode Filter Override Class */
+.linkedin-iframe-container.invert-theme iframe {
+  filter: invert(0.9) hue-rotate(180deg) contrast(1.1) brightness(0.9);
+  background: #000000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* Theme Toggle Button Highlight When Active Filter */
+#linkedinModalThemeToggle.filter-active {
+  color: var(--gold-primary);
+  background: rgba(181, 143, 0, 0.1);
+}
+
+/* Keyframes */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .linkedin-modal {
+    padding: 0.75rem;
+  }
+  .linkedin-modal-content {
+    max-height: 90vh;
+    border-radius: var(--radius-md);
+  }
+  .linkedin-modal-body {
+    min-height: 300px;
+    padding: 1rem;
+  }
+  .linkedin-iframe-container {
+    min-height: 460px;
+  }
+  .linkedin-iframe-container iframe {
+    height: 460px;
+  }
+  .btn {
+    width: 100%;
+  }
+}
+
 
 
