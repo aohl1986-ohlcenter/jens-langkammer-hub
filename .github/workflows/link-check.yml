@@ -1,0 +1,30 @@
+name: Link Check
+
+on:
+  schedule:
+    # Wöchentlich montags 05:00 UTC
+    - cron: '0 5 * * 1'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  linkcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check links in HTML files
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # 403/429/999: viele Corporate-Sites (LinkedIn, PwC, …) blocken Bots —
+          # das sind keine kaputten Links. Uns interessieren echte 404/410/5xx.
+          args: >-
+            --no-progress
+            --accept '100..=103,200..=299,403,429,999'
+            --exclude 'linkedin\.com'
+            --exclude 'xing\.com'
+            './*.html'
+            'README.md'
+          fail: true

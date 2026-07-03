@@ -1,5 +1,7 @@
 # jens-langkammer.de — Personal Brand Hub
 
+[![Link Check](https://github.com/aohl1986-ohlcenter/jens-langkammer-hub/actions/workflows/link-check.yml/badge.svg)](https://github.com/aohl1986-ohlcenter/jens-langkammer-hub/actions/workflows/link-check.yml)
+
 Hochperformante Personal-Branding- und Entity-SEO-Seite für **Jens Langkammer** (Director, Strategy& / PwC — Consumer Markets & eGrocery).
 
 **Live:** [jens-langkammer.de](https://jens-langkammer.de)
